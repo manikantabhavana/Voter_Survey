@@ -1,8 +1,14 @@
 import React from 'react'
 import './Mainpage.css';
 import { Icon } from '@iconify/react';
+import { useNavigate } from 'react-router-dom';
 
 function Mainpage() {
+    const navigate=useNavigate()
+    const goToPage=(page)=>{
+        navigate(`${page}`)
+
+    }
   return (
     <div className='MainPageMainCont'>
         <div className='HeaderBarCont'>
@@ -52,7 +58,7 @@ function Mainpage() {
                     <div className='SurveyTitle'>Survey</div>
                     <div className='menuItemsContt'>
                 
-                    <div className='OptionCont'>
+                    <div className='OptionCont' onClick={()=>{goToPage('booth-list')}}>
                         <Icon icon="mdi:format-list-numbers" className='OptionContIcon'  />
                         <div>Booths</div>
                     </div>
@@ -69,6 +75,68 @@ function Mainpage() {
                         <div>Mandals</div>
                     </div>
                     </div>
+
+
+                    
+
+
+                </div>
+                <div className='ConstituencyDetailsCont'>
+                <div className='Assembly'>Find A Voter</div>
+                <Icon icon="material-symbols-light:keyboard-arrow-right" className='Icon'/>
+                    </div>
+                <div className='menuItemsCont'>
+                    <div className='SurveyTitle'>Others</div>
+                    <div className='menuItemsConttt'>
+                
+                    <div className='OptionCont'>
+                        <Icon icon="mdi:format-list-numbers" className='OptionContIcon'  />
+                        <div>Mobile</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="mdi:format-list-numbers" className='OptionContIcon'  />
+                        <div>Family</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="fluent-mdl2:b-i-dashboard" className='OptionContIcon' />
+                        <div>House No</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="tabler:location" className='OptionContIcon'  />
+                        <div>Areas</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="tabler:location" className='OptionContIcon'  />
+                        <div>Areas</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="tabler:location" className='OptionContIcon'  />
+                        <div>Areas</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="tabler:location" className='OptionContIcon'  />
+                        <div>Areas</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="tabler:location" className='OptionContIcon'  />
+                        <div>Areas</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="tabler:location" className='OptionContIcon'  />
+                        <div>Areas</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="tabler:location" className='OptionContIcon'  />
+                        <div>Areas</div>
+                    </div>
+                    <div className='OptionCont'>
+                        <Icon icon="tabler:location" className='OptionContIcon'  />
+                        <div>Areas</div>
+                    </div>
+                    </div>
+
+
+                    
 
 
                 </div>
