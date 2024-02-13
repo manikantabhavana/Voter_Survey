@@ -40,11 +40,11 @@ function BoothList() {
         <div className='BoothListCont'>
             <div className='AllocatedFinishedCont'>
                         <div className='AllocatedCont'>
-                            <div className='AllocatedBooths'>20</div>
+                            <div className='AllocatedBooths'>{Booths.length}</div>
                             <div className='AllocatedText'>Allocated</div>
                         </div>
                         <div className='FinishedCont'>
-                            <div className='FinishedBooth'>10</div>
+                            <div className='FinishedBooth'>0</div>
                             <div className='AllocatedText'>Completed</div>
                         </div>
             </div>

@@ -7,14 +7,12 @@ const apiService={
   },
   post:async(endpoint,payload)=>{
     const url=`${API_BASE_URL}/${endpoint}`
-    const headers={
-      'Content-Type':'application/json',
-       
-
-    }
+    
     const response=await fetch(url,{
       method:'POST',
-      headers:headers,
+      headers:{
+        'Content-Type':'application/json'
+      },
       body:JSON.stringify(payload)
       
 

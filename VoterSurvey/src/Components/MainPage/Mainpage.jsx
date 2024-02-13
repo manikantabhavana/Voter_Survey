@@ -145,8 +145,8 @@ function Mainpage() {
         </div>
         <div className='navBarCont'>
             <div className='OptionCont'>
-                <Icon icon="charm:home"    className='OptionContIcon'/>
-                <div>Home</div>
+                <Icon icon="charm:home"    className='OptionContIcon activeNavIcon'/>
+                <div className='activeNav'>Home</div>
             </div>
             <div className='OptionCont'>
                 <Icon icon="mdi:format-list-numbers" className='OptionContIcon'  />

@@ -10,7 +10,7 @@
     
     height: 4vh;
     align-items: center;
-    background-color: #6739B7;
+    background-color: #28529E;
     color:white;
     display: flex;
     padding: 4vw;
@@ -53,7 +53,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: rgb(211, 184, 255);
+    background:#1555cd9d;
     
     
     
@@ -72,7 +72,7 @@
     flex-grow: 0.1;
     background-color: white;
     width: 100%;
-    color:rgb(211, 184, 255);
+    color:#28529E;
     display: flex;
     align-items: center;
     justify-content: center;
