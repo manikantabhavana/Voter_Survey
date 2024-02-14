@@ -1,79 +1,4 @@
-.LoginMainCont{
-    width: 100vw;
-    height: 100vh;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.LoginCont{
-    width: 25%;
-    display: flex;
-    flex-direction: column;
-    margin: auto;
-    box-shadow: 0px 3px 8px 0px #00000040;
-
-    
-}
-.LoginHeaderCont{
-    width: 100%;
-    height: 30vh;
-    background-color: #6739B7;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.LoginIcon{
-    
-    width: 50%;
-    height: 50%;
-   
-}
-
-
-.LoginInputCont{
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
-    background-color: aliceblue;
-    height: 40vh;
-
-}
-
-.LoginInputCont input{
-    margin-top: 5vh;
-    border: none;
-    outline: none;
-    width: 60%;
-    font-size: 1.2vw;
-    font-weight: 600;
-    padding: 0.7vw 1vw;
-    color:#955cf8;
-    border-radius: 0.5vw;
-    box-shadow: 0px 3px 8px 0px #00000040;
-}
-
-.LoginInputCont input::placeholder{
-    color: gray;
-    font-weight: 500;
-}
-
-.LoginBtn{
-    background: linear-gradient(180deg, #9D4DE4 0%, #BC63FC 38%, #955cf8 100%);
-    padding:0.5vw 1vw;
-    margin-top: 10%;
-    color:white;
-    font-weight: 600;
-    border-radius: 0.5vw;
-    box-shadow: 0px 3px 8px 0px #00000040;
-    cursor: pointer;
-
-}
 
 @media screen and (max-width:768px) {
     .LoginCont{
@@ -81,23 +6,60 @@
     }
     .LoginHeaderCont{
         height: 30vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        
     }
-    .LoginInputCont{
-        height: 70vh;
+    .PPLogo{
+        width: 60%;
+    }
+    .LoginText{
+        font-size: 5vw;
+        font-weight: 700;
+        color:rgb(62, 61, 61);
+        margin-left: 3%;
     }
 
-    .LoginInputCont input{
+    .LoginInputCont{
+        margin-top: 15%;
+       
+        height: 65vh;
+        gap:5%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .LoginInputCont input,.LoginBtn{
         width: 90%;
         height: 7vh;
         font-size: 5vw;
+        font-weight: 600;
         padding-left: 3vw;
+        border:none;
+        box-shadow: 0px 0px 8px 0px rgb(184, 184, 184);
+        border-radius: 2vw;
+        outline: none;
+
+
     }
     .LoginBtn{
-       
-        font-size:9vw;
-        padding: 2vw 4vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-weight: 600;
+        color:white;
+        background-color: rgb(0, 0, 150);
     }
+    .LoginInputCont input::placeholder{
+        color:rgb(99, 99, 99);
+        font-size: 4vw;
+        font-weight:600;
+    }
+  
 
     
 }

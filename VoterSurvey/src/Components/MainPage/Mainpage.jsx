@@ -1,14 +1,64 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './Mainpage.css';
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie'
+import AuthService from '../../Services/GetAuthServices';
 
 function Mainpage() {
+    const [Mobile,setMobile]=useState(null)
+    const [Name,setName]=useState(null)
+    const [Allocate,setAllocate]=useState(0)
+    const [Complete,setComplete]=useState(0)
+    const [Constituency,setConstituency]=useState('Constituency')
+
     const navigate=useNavigate()
     const goToPage=(page)=>{
         navigate(`${page}`)
 
     }
+
+
+    const getUserDetails = async () => {
+        const token = Cookies.get('jwtToken');
+       
+      
+        if (!token) {
+          console.log('Token is missing');
+          return;
+        }
+      
+        const response = await fetch('https://api.stepnext.com/User-Details', {
+          method: 'POST',
+          headers: {
+            authorization:`Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+         
+          setMobile(data[0].Surveyer)
+          setName(data[0].Name)
+          await Cookies.set('Surveyer',data[0].Name)
+          
+          setAllocate(data.length)
+          setComplete(data.filter((data)=>{data.Status==='Completed'}).length)
+          setConstituency(data[0].Constitunecy)
+         
+        } else {
+          console.error('Error Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            body: await response.text(),
+          });
+        }
+    }
+useEffect(()=>{
+    getUserDetails()
+},[])
+      
+ 
   return (
     <div className='MainPageMainCont'>
         <div className='HeaderBarCont'>
@@ -17,11 +67,11 @@ function Mainpage() {
                 <Icon icon="iconamoon:profile-thin" className='ProfileIcon'/>
                 <div className='AddressMainCont'>
                     <div className='NameCont'>
-                        <div className='Name'>Manikanta</div>
+                        <div className='Name'>{Name}</div>
                         <Icon icon="eva:arrow-down-fill"  />
                     </div>
                     <div>
-                        <div className='Address'>Main Road</div>
+                        <div className='Address'>{Mobile}</div>
                     </div>
                 </div>
 
@@ -36,7 +86,7 @@ function Mainpage() {
         </div>
         <div className='menuCont'>
             <div className='ConstituencyDetailsCont'>
-                <div className='Assembly'>Mummidivaram</div>
+                <div className='Assembly'>{Constituency}</div>
                 <Icon icon="material-symbols-light:keyboard-arrow-right" className='Icon'/>
                 
                 
@@ -45,11 +95,11 @@ function Mainpage() {
 
             <div className='AllocatedFinishedCont'>
                     <div className='AllocatedCont'>
-                         <div className='AllocatedBooths'>20</div>
+                         <div className='AllocatedBooths'>{Allocate}</div>
                         <div className='AllocatedText'>Allocated</div>
                     </div>
                     <div className='FinishedCont'>
-                         <div className='FinishedBooth'>10</div>
+                         <div className='FinishedBooth'>{Complete}</div>
                         <div className='AllocatedText'>Completed</div>
                     </div>
                 </div>
@@ -166,6 +216,6 @@ function Mainpage() {
 
     </div>
   )
-}
 
+  }
 export default Mainpage

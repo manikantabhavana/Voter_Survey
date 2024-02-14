@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import apiService from "./api";
 const VotersService={
     getVoters:async(BoothNo)=>{
@@ -25,7 +26,8 @@ const VotersService={
      },
      getMembers:async(HouseNo,BoothNo)=>{
         try{
-         const response=await apiService.get(`members/?house=${HouseNo}&booth=${BoothNo}`,)
+         
+         const response=await apiService.post(`members`,{house:HouseNo,booth:BoothNo})
          return response
  
         }
@@ -35,6 +37,7 @@ const VotersService={
  
      },
      submitSurvey:async(selectedMembers,surveyData)=>{
+     
         try{
          const response=await apiService.post('submit-survey-all',{selectedMembers,surveyData})
          return response

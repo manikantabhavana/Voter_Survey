@@ -9,7 +9,7 @@ import SelectorsService from '../../Services/GetSelectorsService';
 import VotersService from '../../Services/GetVotersService';
 import { useDispatch,useSelector } from 'react-redux';
 import { addSelectedMember, removeSelectedMember,selectSelectedMembers,resetSelectedMembers } from '../../Store/slice'
-
+import Cookies from 'js-cookie';
 const { TextArea } = Input;
 
 function SurveyForm() {
@@ -17,6 +17,7 @@ function SurveyForm() {
     const dispatch = useDispatch();
     const {BoothNo,VoterId}=useParams();
     const [ShowForm,setShowForm]=useState(false);
+    const surveyer=Cookies.get('Surveyer')
    
     
     const [MembersCount,setMembersCount]=useState('5');
@@ -72,12 +73,14 @@ function SurveyForm() {
       try{
         const response=await VotersService.getVoterDetails(VoterId)
        
-        setName(response.results[0].Voter_Name)
-        setHouseNo(response.results[0].House_No)
+        setName(response.results[0].Name)
+        setHouseNo(response.results[0].House_Number)
+        
         setAge(response.results[0].Age)
         setGender(response.results[0].Gender)
-        setRName(response.results[0].Relative_Name)
-        setRealtion(response.results[0].Relation)
+        setRName(response.results[0].Father_Name)
+        setRealtion('Relative')
+        getMembers();
 
       }
       catch(error){
@@ -88,8 +91,10 @@ function SurveyForm() {
 
     const getMembers=async()=>{
       try{
+
         const members=await VotersService.getMembers(HouseNo,BoothNo)
         const memberss=await members.results
+        console.log(members)
         setMembers(memberss)
         setMembersCount(memberss.length)
         
@@ -112,14 +117,15 @@ function SurveyForm() {
     }
     useEffect(()=>{
       getVoterDetails();
-      getMembers();
+      
       getSeletors();  
+      
     },[HouseNo])
     
 
     const handleSelectedMembers = (event, member) => {
       const { checked } = event.target;
-      const memberName = member.Voter_Card_No;
+      const memberName = member.Epic;
   
       if (checked) {
         dispatch(addSelectedMember(memberName));
@@ -129,7 +135,7 @@ function SurveyForm() {
     };
 
     const submitSurvey=async()=>{
-      const surveyData={Mobile_Number:Mobile,Caste:Caste,Color:Color,Problem:Problem,Remarks:Remark,Survey:1,observations:Observation,availability:Availability,nearest_location:Location}
+      const surveyData={Mobile:Mobile,Caste:Caste,Color:Color,Problems:Problem,Remarks:Remark,Survey:1,Observation:Observation,Availability:Availability,Location:Location,Surveyer:surveyer}
       //const surveyData={Mobile_Number:Mobile}
       try{
         const response=await VotersService.submitSurvey(selectedMembers,surveyData);
@@ -204,11 +210,6 @@ function SurveyForm() {
             filterSort={(optionA, optionB) =>
               (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
             }
-
-            
-            
-            
-            
             />
 
 
@@ -253,9 +254,9 @@ function SurveyForm() {
                      className='selectName'
                      onChange={(event) => handleSelectedMembers(event, member)}
 
-                     checked=  {selectedMembers.includes(member.Voter_Card_No)}
+                     checked=  {selectedMembers.includes(member.Epic)}
                      
-                    />{member.Voter_Name}
+                    />{member.Name}
                 </label>
 
               ))

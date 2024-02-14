@@ -1,24 +1,57 @@
 import React from 'react'
 import './Login.css'
-import { Icon } from '@iconify/react';
+
 import { useNavigate } from 'react-router-dom';
+import Logo from "../../assets/Images/people_pulse_logo.png"
+
+import { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import AuthService from '../../Services/GetAuthServices';
+
 function Login() {
     const navigate = useNavigate()
-    const GoToLogin=()=>{
-        navigate('mainpage')
+    const [Mobile,setMobile]=useState(null);
+    const [Password,setPassword]=useState(null);
+    const GoToLogin=async()=>{
+        if(Mobile!=null && Mobile.length==10 && Password!=null){
+            const data={Mobile:Mobile,Password:Password}
+            const response=await AuthService.ValidateLogin(data)
+            
+            
+          
+            if(response==true){
+                toast.success('Login SuccessFull')
+                navigate('mainpage')
+            }
+            else{
+                toast.error('Login Failed')
+            }
+            
+
+            
+        }else{
+            toast.error("Enter Correct Login Details")
+        }
+        
+        
     }
 
   return (
     <div className='LoginMainCont'>
+        <ToastContainer/>
         <div className='LoginCont'>
             <div className='LoginHeaderCont'>
-            <Icon icon="gg:profile"  color='white' className='LoginIcon'/>
+                <img src={Logo} className='PPLogo' />
+              
 
             </div>
+            <div className='LoginText'>Login to your Account</div>
+           
             <div className='LoginInputCont'>
                 
-                <input type='text' placeholder='Username'/>
-                <input type='password' placeholder='password'/>
+                
+                <input type='text' placeholder='Mobile Number' value={Mobile} onChange={(e)=>{setMobile(e.target.value)}} maxLength={10}/>
+                <input type='password' placeholder='password' value={Password} onChange={(e)=>{setPassword(e.target.value)}}/>
                 <div className='LoginBtn' onClick={GoToLogin}>Login</div>
 
             </div>

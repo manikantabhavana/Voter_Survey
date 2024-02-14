@@ -106,3 +106,20 @@
     font-size: 6vw;
     font-weight: 600;
 }
+
+.surveyer{
+   
+    font-size: 4vw;
+    color:black;
+    font-weight: 600;
+   
+    margin-inline-start:auto;
+    transform: rotate(90deg);
+    transform-origin:right;
+    text-align: center;
+    
+   
+
+    
+
+}

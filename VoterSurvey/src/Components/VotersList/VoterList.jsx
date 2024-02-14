@@ -7,9 +7,14 @@ import VotersService from '../../Services/GetVotersService';
 import { useSelector,useDispatch } from 'react-redux';
 import { addVoterList,selectVoterList } from '../../Store/slice';
 import { Spin } from 'antd';
+import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 function VoterList() {
   const navigate=useNavigate()
+  const Surveyer=Cookies.get('Surveyer')
   const dispatch=useDispatch()
+  
+  
   const Voters=useSelector(selectVoterList)
   const {BoothNo}=useParams()
   //const [Voters,setVoters]=useState([])
@@ -32,8 +37,10 @@ function VoterList() {
 
   const getVotersList=async()=>{
     showLoader()
+    
     try{
       const response=await VotersService.getVoters(BoothNo)
+     
       dispatch(addVoterList(response.results))
     }
     catch(error){
@@ -44,18 +51,21 @@ function VoterList() {
     
     if(searchTerms==null){
       setTotalVoters(Voters)
+      
     }
+    
     else{
 
-      const filteredVoters=Voters.filter(voter=>(voter.Voter_Name.toLowerCase().includes(searchTerms.toLowerCase()))
-      ||(voter.Voter_Card_No.toLowerCase().includes(searchTerms.toLowerCase()))
-      ||(voter.House_No.toLowerCase().includes(searchTerms.toLowerCase())));
+      const filteredVoters=Voters.filter(voter=>(voter.Name.toLowerCase().includes(searchTerms.toLowerCase()))
+      ||(voter.Epic.toLowerCase().includes(searchTerms.toLowerCase()))
+      ||(voter.House_Number.toLowerCase().includes(searchTerms.toLowerCase())));
       setTotalVoters(filteredVoters)
     }
   },[searchTerms,Voters])
   useEffect(()=>{
     
     getVotersList()
+    
    
     
   },[dispatch])
@@ -65,8 +75,32 @@ function VoterList() {
   const goBack=()=>{
     navigate(-1)
   }
-  const goToSurvey=(VoterId)=>{
-    navigate(`voter-survey/${VoterId}`)
+  const updateSurveyStatus=async(Voter)=>{
+    const selectedMembers=[Voter]
+    const surveyData={Surveyer:Surveyer}
+
+
+  
+      try{
+        
+        const response=await VotersService.submitSurvey(selectedMembers,surveyData);
+
+      }
+      catch(error){
+        console.error(error,'error in submitting availabilty status')
+      }
+}
+  const goToSurvey=(VoterId,surveyer)=>{
+    if(surveyer==="" || Surveyer===surveyer ){
+      updateSurveyStatus(VoterId)
+
+      
+      
+       navigate(`voter-survey/${VoterId}`)
+    }
+    else{
+      toast.error('No Permission')
+    }
   }
   
  
@@ -92,7 +126,7 @@ function VoterList() {
                               <div className='AllocatedText'>Total</div>
                           </div>
                           <div className='FinishedCont'>
-                              <div className='FinishedBooth'>{TotalVoters.filter((voter)=>voter.Survey==1).length}</div>
+                              <div className='FinishedBooth'>{TotalVoters.filter((voter)=>voter.Survey==="1").length}</div>
                               <div className='AllocatedText'>Surveyed</div>
                           </div>
               </div>
@@ -104,16 +138,18 @@ function VoterList() {
             <div className='VoterList'>
               {TotalVoters.length>=1?
                 TotalVoters.map((voter)=>(
-                  <div className='VoterCard' onClick={()=>{goToSurvey(voter.Voter_Card_No)}} style={voter.Survey===1?{background: 'linear-gradient(90deg, rgba(255,255,255,1) 96%, rgba(0,255,8,0.978203781512605) 96%)'}:{background:'linear-gradient(90deg, rgba(255,255,255,1) 96%, rgba(0,1,152,0.978203781512605) 96%)'}}>
+
+                  <div className='VoterCard' onClick={()=>{goToSurvey(voter.Epic,voter.Surveyer)}} style={voter.Survey==="1"?{background: 'linear-gradient(90deg, rgba(255,255,255,1) 94%, rgba(0,255,8,0.978203781512605) 94%)'}:{background:'linear-gradient(90deg, rgba(255,255,255,1) 96%, rgba(0,1,152,0.978203781512605) 96%)'}}>
 
                     <div className='VoterSnoCont'>
-                        <div className='VoterId'><strong>Id : </strong>{voter.Voter_Card_No}</div>
-                        <div className='SNO'><strong>S NO : </strong>{voter.Serial_No}</div>
+                        <div className='VoterId'><strong>Id : </strong>{voter.Epic}</div>
+                        <div className='SNO'><strong>S NO : </strong>{voter.Voter_S_no}</div>
                     </div>
+                   
                      
                     
-                    <div className='VoterName'><strong>Name : </strong>{voter.Voter_Name}</div>
-                    <div className='VoterFName'><strong>{voter.Relation} : </strong>{voter.Relative_Name}</div>
+                    <div className='VoterName'><strong>Name : </strong>{voter.Name}</div>
+                    <div className='VoterFName'><strong>Relative : </strong>{voter.Father_Name}</div>
                     <div className='VoterAgeCont'>
 
                       <div><strong>Age : </strong>{voter.Age}</div>
@@ -122,7 +158,8 @@ function VoterList() {
                       
                     </div>
                     
-                    <div><strong>H NO : </strong>{voter.House_No}</div>
+                    <div><strong>H NO : </strong>{voter.House_Number}</div>
+                    <div className='surveyer'>{voter.Surveyer}</div>
                    
                   </div>
                 )): <Spin spinning={spinning} fullscreen/>

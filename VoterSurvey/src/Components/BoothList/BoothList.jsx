@@ -4,6 +4,7 @@ import { useState,useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import BoothService from '../../Services/GetBoothsService';
 import {useNavigate} from 'react-router-dom'
+import Cookies from 'js-cookie';
 function BoothList() {
     const navigate=useNavigate()
     const [Booths,setBooths]=useState([])
@@ -15,21 +16,40 @@ function BoothList() {
     const getVoters=(BoothNo)=>{
         navigate(`booth-voter-list/${BoothNo}`)
     }
-    const getBooths=async()=>{
-        try{
-            const booths= await BoothService.getBooths()
-            setBooths(booths.results)
-
+    const getUserDetails = async () => {
+        const token = Cookies.get('jwtToken');
+       
+      
+        if (!token) {
+          console.log('Token is missing');
+          return;
         }
-        catch(error){
-            console.error('error in fetching booths from BoothsService')
+      
+        const response = await fetch('https://api.stepnext.com/User-Details', {
+          method: 'POST',
+          headers: {
+            authorization:`Bearer ${token}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+        
+          setBooths(data)
+          
+         
+        } else {
+          console.error('Error Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            body: await response.text(),
+          });
         }
-        
-        
     }
-    useEffect(()=>{
-        getBooths()
-    },[])
+useEffect(()=>{
+    getUserDetails()
+},[])
+      
 
     return (
     <div className='BoothListMainCont'>
@@ -44,7 +64,7 @@ function BoothList() {
                             <div className='AllocatedText'>Allocated</div>
                         </div>
                         <div className='FinishedCont'>
-                            <div className='FinishedBooth'>0</div>
+                            <div className='FinishedBooth'>{Booths.filter((data)=>{data.Status==='Completed'}).length}</div>
                             <div className='AllocatedText'>Completed</div>
                         </div>
             </div>
@@ -52,9 +72,10 @@ function BoothList() {
                 <div className='BoothsListGrid'>
                     {
                         Booths.map((booth)=>(
-                            <div className='BoothCont' key={booth.Part_No} onClick={()=>{getVoters(booth.Part_No)}}>
-                                <div className='BoothNo' key={booth.Part_No}>{booth.Part_No}</div>
-                                <div className='WardNo' key={booth.Part_No}>Ward : 1</div>  
+                            <div className='BoothCont' key={booth.Booth} onClick={()=>{getVoters(booth.Booth)}}>
+                                <div className='Status' key={booth.Booth} style={{color:booth.Status!='Completed'?'yellow':'Green'}}>{booth.Status}</div>
+                                <div className='BoothNo' key={booth.Booth}>{booth.Booth}</div>
+                                <div className='WardNo' key={booth.Booth}>Ward : {booth.Wards}</div>  
                             </div>
 
                         ))
