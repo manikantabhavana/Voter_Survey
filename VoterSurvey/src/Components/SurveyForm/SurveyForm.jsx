@@ -10,12 +10,33 @@ import VotersService from '../../Services/GetVotersService';
 import { useDispatch,useSelector } from 'react-redux';
 import { addSelectedMember, removeSelectedMember,selectSelectedMembers,resetSelectedMembers } from '../../Store/slice'
 import Cookies from 'js-cookie';
+
 const { TextArea } = Input;
 
 function SurveyForm() {
+    const currentDate=new Date()
+    
     const navigate=useNavigate()
     const dispatch = useDispatch();
-    const {BoothNo,VoterId}=useParams();
+
+    const [No,setNo]=useState(0)
+    const {BoothNo,WardNo,VoterId}=useParams();
+    useEffect(()=>{
+      if(BoothNo!=undefined){
+        setNo(BoothNo)
+      }
+      else{
+        setNo(WardNo)
+      }
+  
+
+
+    },[])
+    
+
+  
+
+
     const [ShowForm,setShowForm]=useState(false);
     const surveyer=Cookies.get('Surveyer')
    
@@ -79,6 +100,16 @@ function SurveyForm() {
         setAge(response.results[0].Age)
         setGender(response.results[0].Gender)
         setRName(response.results[0].Father_Name)
+        if(response.results[0].Survey==="1"){
+          setCaste(response.results[0].Caste)
+          setColor(response.results[0].Color)
+          setAvailability(response.results[0].Availability)
+          setObservation(response.results[0].Observation)
+          setMobile(response.results[0].Mobile)
+          setLocation(response.results[0].Location)
+          setProblem(response.results[0].Problems)
+          setRemark(response.results[0].Remarks)
+        }
         setRealtion('Relative')
         getMembers();
 
@@ -92,10 +123,11 @@ function SurveyForm() {
     const getMembers=async()=>{
       try{
 
-        const members=await VotersService.getMembers(HouseNo,BoothNo)
+        const members=await VotersService.getMembers(HouseNo,No)
         const memberss=await members.results
-        console.log(members)
+       
         setMembers(memberss)
+        console.log(members,'kkk')
         setMembersCount(memberss.length)
         
         
@@ -135,7 +167,7 @@ function SurveyForm() {
     };
 
     const submitSurvey=async()=>{
-      const surveyData={Mobile:Mobile,Caste:Caste,Color:Color,Problems:Problem,Remarks:Remark,Survey:1,Observation:Observation,Availability:Availability,Location:Location,Surveyer:surveyer}
+      const surveyData={Mobile:Mobile,Caste:Caste,Color:Color,Problems:Problem,Remarks:Remark,Survey:1,Observation:Observation,Availability:Availability,Location:Location,Surveyer:surveyer,Surveyed_on:currentDate.toLocaleString()}
       //const surveyData={Mobile_Number:Mobile}
       try{
         const response=await VotersService.submitSurvey(selectedMembers,surveyData);
@@ -161,6 +193,9 @@ function SurveyForm() {
         console.error('error in submitting Survey',error)
       }
     }
+
+
+   
   return (
     <div className='SurveyFormMainCont'>
       <ToastContainer/>
@@ -187,7 +222,7 @@ function SurveyForm() {
            
             
             
-            <input type='number' placeholder='Mobile Number'  value={Mobile} onChange={(e)=>{setMobile(e.target.value)}}/>
+            <input type='text' placeholder='Mobile Number'  value={Mobile} onChange={(e)=>{setMobile(e.target.value)}}/>
             <Select placeholder={'Select Caste'} 
             showSearch
             options={Castes} 
@@ -200,7 +235,7 @@ function SurveyForm() {
             onSelect={(value,option)=>{ setCaste(value)}} 
             className='SelectAntd'/>
 
-            <Select placeholder={'Select Problmes'}
+            <Select placeholder={'Select Problem'}
              options={Problems}
             className='SelectAntd'
             value={Problem}

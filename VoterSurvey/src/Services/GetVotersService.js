@@ -13,6 +13,30 @@ const VotersService={
        }
 
     },
+    getWardVoters:async(WardNo)=>{
+      try{
+       const response=await apiService.get(`Wards-Voters/?ward=${WardNo}`,)
+       
+       return response
+
+      }
+      catch(error){
+       console.error('error in fetching booths')
+      }
+
+   },
+   getAreaVoters:async(Area,BoothNo)=>{
+      try{
+       const response=await apiService.get(`Area-Voters/?area=${Area}&booth=${BoothNo}`)
+       
+       return response
+
+      }
+      catch(error){
+       console.error('error in fetching Votes by area')
+      }
+
+   },
     getVoterDetails:async(VoterId)=>{
         try{
          const response=await apiService.get(`get-voter-details/?voter_id=${VoterId}`,)

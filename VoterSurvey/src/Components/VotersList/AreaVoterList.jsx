@@ -9,14 +9,14 @@ import { addVoterList,selectVoterList } from '../../Store/slice';
 import { Spin } from 'antd';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
-function VoterList() {
+function AreaVoterList() {
   const navigate=useNavigate()
   const Surveyer=Cookies.get('Surveyer')
   const dispatch=useDispatch()
   
   
   const Voters=useSelector(selectVoterList)
-  const {BoothNo}=useParams()
+  const {Area,BoothNo}=useParams()
   //const [Voters,setVoters]=useState([])
   const [TotalVoters,setTotalVoters]=useState([]);
   const [searchTerms,setSearchTerms]=useState(null);
@@ -39,7 +39,7 @@ function VoterList() {
     showLoader()
     
     try{
-      const response=await VotersService.getVoters(BoothNo)
+      const response=await VotersService.getAreaVoters(Area,BoothNo)
      
       dispatch(addVoterList(response.results))
     }
@@ -117,7 +117,7 @@ function VoterList() {
      
         <div className='VoterHeaderCont'>
          <Icon icon="gravity-ui:arrow-left" className='ArrowIcon' onClick={goBack}/>
-         <div>Booth NO : {BoothNo}</div>
+         <div>Area : {Area}</div>
         </div>
         <div className='VoterListCont'>
           <div className='VoterListAFS'>
@@ -127,7 +127,7 @@ function VoterList() {
                               <div className='AllocatedText'>Total</div>
                           </div>
                           <div className='FinishedCont'>
-                              <div className='FinishedBooth'>{TotalVoters.filter((voter)=>voter.Survey==="1").length}</div>
+                              <div className='FinishedBooth'>{TotalVoters.filter((voter)=>voter.Survey===1).length}</div>
                               <div className='AllocatedText'>Surveyed</div>
                           </div>
               </div>
@@ -140,7 +140,7 @@ function VoterList() {
               {TotalVoters.length>=1?
                 TotalVoters.map((voter)=>(
 
-                  <div className='VoterCard' onClick={()=>{goToSurvey(voter.Epic,voter.Surveyer)}} style={voter.Survey==="1"?{background: 'linear-gradient(90deg, rgba(255,255,255,1) 94%, rgba(0,255,8,0.978203781512605) 94%)'}:{background:'linear-gradient(90deg, rgba(255,255,255,1) 96%, rgba(0,1,152,0.978203781512605) 96%)'}}>
+                  <div className='VoterCard' onClick={()=>{goToSurvey(voter.Epic,voter.Surveyer)}} style={voter.Survey==1?{background: 'linear-gradient(90deg, rgba(255,255,255,1) 95%, rgba(0,255,8,0.978203781512605) 95%)'}:{background:'linear-gradient(90deg, rgba(255,255,255,1) 95%, rgba(0,1,152,0.978203781512605) 95%)'}}>
 
                     <div className='VoterSnoCont'>
                         <div className='VoterId'><strong>Id : </strong>{voter.Epic}</div>
@@ -160,7 +160,7 @@ function VoterList() {
                     </div>
                     
                     <div><strong>H NO : </strong>{voter.House_Number}</div>
-                    <div className='surveyer'>{voter.Surveyer}</div>
+                    <div className='surveyer'>{voter.Surveyer.split(' ')[0]}</div>
                    
                   </div>
                 )): <Spin spinning={spinning} fullscreen/>
@@ -178,4 +178,4 @@ function VoterList() {
   )
 }
 
-export default VoterList
+export default AreaVoterList

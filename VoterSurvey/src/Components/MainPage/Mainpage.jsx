@@ -6,11 +6,15 @@ import Cookies from 'js-cookie'
 import AuthService from '../../Services/GetAuthServices';
 
 function Mainpage() {
+    
+    
     const [Mobile,setMobile]=useState(null)
     const [Name,setName]=useState(null)
     const [Allocate,setAllocate]=useState(0)
     const [Complete,setComplete]=useState(0)
-    const [Constituency,setConstituency]=useState('Constituency')
+    const [Constituency,setConstituency]=useState('Constituency');
+    const [location, setLocation] = useState(null);
+    const [permissionDenied, setPermissionDenied] = useState(false);
 
     const navigate=useNavigate()
     const goToPage=(page)=>{
@@ -57,6 +61,35 @@ function Mainpage() {
 useEffect(()=>{
     getUserDetails()
 },[])
+useEffect(() => {
+    const askForLocation = async () => {
+      try {
+        const granted = await navigator.permissions.query({ name: 'geolocation' });
+
+        if (granted.state === 'granted') {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              setLocation({ latitude, longitude });
+              
+            },
+            (error) => {
+              console.error('Error getting location:', error.message);
+             
+            }
+          );
+        } else if (granted.state === 'denied') {
+          setPermissionDenied(true);
+        }
+      } catch (error) {
+        console.error('Error checking geolocation permission:', error.message);
+       
+      }
+    };
+
+    askForLocation();
+  }, []);
+
       
  
   return (
@@ -112,13 +145,13 @@ useEffect(()=>{
                         <Icon icon="mdi:format-list-numbers" className='OptionContIcon'  />
                         <div>Booths</div>
                     </div>
-                    <div className='OptionCont'>
+                    <div className='OptionCont'  onClick={()=>{goToPage('wards-list')}}>
                         <Icon icon="mdi:format-list-numbers" className='OptionContIcon'  />
                         <div>Wards</div>
                     </div>
                     <div className='OptionCont'>
-                        <Icon icon="fluent-mdl2:b-i-dashboard" className='OptionContIcon' />
-                        <div>Villages</div>
+                        <Icon icon="fluent-mdl2:b-i-dashboard" className='OptionContIcon' onClick={()=>{goToPage('areas-list')}} />
+                        <div>Areas</div>
                     </div>
                     <div className='OptionCont'>
                         <Icon icon="tabler:location" className='OptionContIcon'  />

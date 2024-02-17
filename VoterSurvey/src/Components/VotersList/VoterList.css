@@ -21,18 +21,35 @@
 .VoterHeaderCont .ArrowIcon{
     font-size: 7vw;   
 }
+.SearchCont{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+   
+   
+}
+.SearchCont .SearchBtn{
+    background-color: #28529E;
+    color: white;
+    margin-top: 2%;
+    padding: 1vw;
+   
+}
 
 .VoterSearchInput{
     width: 95%;
     margin-top: 5%;
     margin-left: 2.5%;
+    border: none;
     border:2px solid gray;
+    
     border-radius: 3vw;
     font-size: 5vw;
     outline: none;
     padding:3vw 4vw;
     font-weight: 600;
     color:gray;
+
 
 }
 .VoterSearchInput::placeholder{
@@ -44,6 +61,7 @@
     background-color: #f6f1ff;
     display: flex;
     flex-direction: column;
+   
     
 }
 
@@ -54,6 +72,7 @@
     margin-left: 2.5%;
     border-radius: 3vw;
     overflow-y: scroll;
+    overflow-x: hidden;
     padding-top: 2%;
    
     margin-top: 5%;
@@ -110,8 +129,10 @@
 .surveyer{
    
     font-size: 4vw;
-    color:black;
+    color:red;
+ 
     font-weight: 600;
+
    
     margin-inline-start:auto;
     transform: rotate(90deg);

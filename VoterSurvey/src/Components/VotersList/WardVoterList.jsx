@@ -9,14 +9,15 @@ import { addVoterList,selectVoterList } from '../../Store/slice';
 import { Spin } from 'antd';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
-function VoterList() {
+import _ from 'lodash';
+function WardsVoterList() {
   const navigate=useNavigate()
   const Surveyer=Cookies.get('Surveyer')
   const dispatch=useDispatch()
   
   
   const Voters=useSelector(selectVoterList)
-  const {BoothNo}=useParams()
+  const {WardNo}=useParams()
   //const [Voters,setVoters]=useState([])
   const [TotalVoters,setTotalVoters]=useState([]);
   const [searchTerms,setSearchTerms]=useState(null);
@@ -39,30 +40,32 @@ function VoterList() {
     showLoader()
     
     try{
-      const response=await VotersService.getVoters(BoothNo)
+      const response=await VotersService.getWardVoters(WardNo)
+    
      
-      dispatch(addVoterList(response.results))
+      await dispatch(addVoterList(response.results))
     }
     catch(error){
+
       console.error('error in fetching voter list from Voter Service')
     }
   }
-  useEffect(()=>{
-    
-    if(searchTerms==null){
-     
-      setTotalVoters(Voters)
-      
-    }
-    
-    else{
+  const debouncedSearch = (terms) => {
 
-      const filteredVoters=Voters.filter(voter=>(voter.Name.toLowerCase().includes(searchTerms.toLowerCase()))
-      ||(voter.Epic.toLowerCase().includes(searchTerms.toLowerCase()))
-      ||(voter.House_Number.toLowerCase().includes(searchTerms.toLowerCase())));
-      setTotalVoters(filteredVoters)
+    if (terms === null) {
+      setTotalVoters(Voters.slice(0, 200));
+    } else {
+      const filteredVoters = Voters.filter(
+        (voter) =>
+          voter.Name.toLowerCase().includes(terms.toLowerCase()) ||
+          voter.Epic.toLowerCase().includes(terms.toLowerCase()) ||
+          voter.House_Number.toLowerCase().includes(terms.toLowerCase())
+      );
+      setTotalVoters(filteredVoters);
     }
-  },[searchTerms,Voters])
+  }; 
+
+  
   useEffect(()=>{
     
     getVotersList()
@@ -94,9 +97,6 @@ function VoterList() {
   const goToSurvey=(VoterId,surveyer)=>{
     if(surveyer==="" || Surveyer===surveyer ){
       updateSurveyStatus(VoterId)
-
-      
-      
        navigate(`voter-survey/${VoterId}`)
     }
     else{
@@ -117,13 +117,13 @@ function VoterList() {
      
         <div className='VoterHeaderCont'>
          <Icon icon="gravity-ui:arrow-left" className='ArrowIcon' onClick={goBack}/>
-         <div>Booth NO : {BoothNo}</div>
+         <div>Ward NO : {WardNo}</div>
         </div>
         <div className='VoterListCont'>
           <div className='VoterListAFS'>
               <div className='AllocatedFinishedCont'>
-                          <div className='AllocatedCont'>
-                              <div className='AllocatedBooths'>{TotalVoters.length}</div>
+                          <div className = 'AllocatedCont'>
+                              <div className='AllocatedBooths'>{Voters.length}</div>
                               <div className='AllocatedText'>Total</div>
                           </div>
                           <div className='FinishedCont'>
@@ -131,8 +131,9 @@ function VoterList() {
                               <div className='AllocatedText'>Surveyed</div>
                           </div>
               </div>
-              <div>
+              <div className='SearchCont'>
                 <input type='search' placeholder='Search By Voter Id or Name' className='VoterSearchInput' onChange={(e)=>{setSearchTerms(e.target.value)}}/>
+                <div className='SearchBtn' onClick={()=>{debouncedSearch(searchTerms)}}>Search</div>
               </div>
             </div>
         
@@ -160,7 +161,7 @@ function VoterList() {
                     </div>
                     
                     <div><strong>H NO : </strong>{voter.House_Number}</div>
-                    <div className='surveyer'>{voter.Surveyer}</div>
+                    <div className='surveyer'>{voter.Surveyer.split(' ')[0]}</div>
                    
                   </div>
                 )): <Spin spinning={spinning} fullscreen/>
@@ -178,4 +179,4 @@ function VoterList() {
   )
 }
 
-export default VoterList
+export default WardsVoterList
