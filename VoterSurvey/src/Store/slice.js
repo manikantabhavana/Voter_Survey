@@ -5,7 +5,8 @@ export const membersSlice = createSlice({
   name: 'members',
   initialState: {
     selectedMembers: [],
-    voterList:[]
+    voterList:[],
+    addMembersList:[]
   },
   reducers: {
     addSelectedMember: (state, action) => {
@@ -20,6 +21,9 @@ export const membersSlice = createSlice({
       addVoterList:(state,action)=>{
         state.voterList=action.payload
       },
+      addMembersVoterList:(state,action)=>{
+        state.addMembersList=action.payload
+      },
       resetVoterList: (state) => {
         state.voterList = [];
       },
@@ -27,9 +31,10 @@ export const membersSlice = createSlice({
   },
 });
 
-export const { addSelectedMember, removeSelectedMember,resetSelectedMembers,addVoterList,resetVoterList } = membersSlice.actions;
+export const { addSelectedMember, removeSelectedMember,resetSelectedMembers,addVoterList,resetVoterList,addMembersVoterList } = membersSlice.actions;
 
 export const selectSelectedMembers = (state) => state.members.selectedMembers;
 export const selectVoterList = (state) => state.members.voterList;
+export const selectAddMembersVoterList = (state) => state.members.addMembersList;
 
 export default membersSlice.reducer;

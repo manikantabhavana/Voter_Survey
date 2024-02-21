@@ -146,6 +146,18 @@
     width: 100%;
     height:5vh;
 }
+.resetAddCont{
+    display: flex;
+    width: 60%;
+    justify-content: space-between;
+    padding: 1vh;
+}
+.resetBtn,.addBtn{
+    background-color:white;
+    padding: 1vw 2vw;
+    box-shadow: 0px 0px 5px 0px gray;
+    border-radius: 1vw;
+}
 .ant-select-selector{
     height:5vh !important;
     font-size: 5vw !important;
@@ -217,7 +229,44 @@ input[type="checkbox"]{
     box-shadow: 0px 0px 5px 0px gray;
     padding:1vw;
 }
-  
+
+
+.addMembersMainCont{
+    width: 95%;
+   
+}
+.searchMember{
+    width: 90%;
+    margin-left:5% ;
+    height: 5vh;
+    border:2px solid gray;
+    border-radius: 2vw;
+    outline: none;
+    font-size: 5vw;
+    padding: 5%;
+    font-weight: 600;
+    color:rgb(88, 87, 87);
+}
+.addMembersVoterList{
+    overflow-x: hidden;
+    width: 90%;
+    margin-left: 5%;
+    background-color: white;
+    border-radius: 1vw;
+    box-shadow: 0px 0px 5px 0px gray;
+    height:35vh;
+    gap:2vh;
+    display: flex;
+    margin-top: 5%;
+    padding:5% 1%;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+.searchMember::placeholder{
+   
+    font-weight: 500;
+    color:gray
     
+}
    
 }

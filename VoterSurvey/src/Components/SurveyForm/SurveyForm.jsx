@@ -8,13 +8,25 @@ import {Select,Input} from 'antd';
 import SelectorsService from '../../Services/GetSelectorsService';
 import VotersService from '../../Services/GetVotersService';
 import { useDispatch,useSelector } from 'react-redux';
-import { addSelectedMember, removeSelectedMember,selectSelectedMembers,resetSelectedMembers } from '../../Store/slice'
+import { addSelectedMember, removeSelectedMember,selectSelectedMembers,resetSelectedMembers,addMembersVoterList ,selectAddMembersVoterList, addVoterList} from '../../Store/slice'
 import Cookies from 'js-cookie';
+import moment from 'moment-timezone';
+import useLocation from '../../Services/GetGeoLocation';
+import { add } from 'lodash';
 
 const { TextArea } = Input;
 
 function SurveyForm() {
+    
     const currentDate=new Date()
+    const apiKey = 'AIzaSyD3dRlhejixTZP72aNBTtXBRg_olo-bVxQ';
+    const { location, error, getAddress } = useLocation();
+    const [addMemebrs,setAddMembers]=useState(false)
+    
+    const addMembersList=useSelector(selectAddMembersVoterList)
+    const [TotalAddVoters,setTotalAddVoters]=useState([])
+    const [searchTerms,setSearchTerms]=useState(null)
+   
     
     const navigate=useNavigate()
     const dispatch = useDispatch();
@@ -28,14 +40,8 @@ function SurveyForm() {
       else{
         setNo(WardNo)
       }
-  
-
-
     },[])
     
-
-  
-
 
     const [ShowForm,setShowForm]=useState(false);
     const surveyer=Cookies.get('Surveyer')
@@ -49,6 +55,7 @@ function SurveyForm() {
     const [Members,setMembers]=useState([]);
     //const [selectedMembers,setselectedMembers]=useState([]);
     const selectedMembers = useSelector(selectSelectedMembers);
+    
 
 
     const [Mobile,setMobile]=useState(null);
@@ -65,6 +72,11 @@ function SurveyForm() {
     const [Relation,setRealtion]=useState(null);
     const [Observation,setObservation]=useState(null);
     const [Availability,setAvailability]=useState('Local')
+    const [Geo,setGeo]=useState('no address')
+    const [Latitude,setLatitude]=useState(null)
+    const [Longitude,setLongitude]=useState(null)
+    const [Booth,setBooth]=useState(0)
+  
 
     const getSeletors=async()=>{
       try{
@@ -96,11 +108,13 @@ function SurveyForm() {
        
         setName(response.results[0].Name)
         setHouseNo(response.results[0].House_Number)
+        setBooth(response.results[0].Booth)
+        
         
         setAge(response.results[0].Age)
         setGender(response.results[0].Gender)
         setRName(response.results[0].Father_Name)
-        if(response.results[0].Survey==="1"){
+        if(response.results[0].Survey===1){
           setCaste(response.results[0].Caste)
           setColor(response.results[0].Color)
           setAvailability(response.results[0].Availability)
@@ -109,6 +123,7 @@ function SurveyForm() {
           setLocation(response.results[0].Location)
           setProblem(response.results[0].Problems)
           setRemark(response.results[0].Remarks)
+          
         }
         setRealtion('Relative')
         getMembers();
@@ -127,7 +142,7 @@ function SurveyForm() {
         const memberss=await members.results
        
         setMembers(memberss)
-        console.log(members,'kkk')
+       
         setMembersCount(memberss.length)
         
         
@@ -140,6 +155,22 @@ function SurveyForm() {
 
     }
 
+
+    const getAllVoters=async()=>{
+      try{
+       
+        
+        const response=await VotersService.getVoters(Booth)
+       
+        dispatch(addMembersVoterList(response.results))
+
+      }
+      catch(error){
+        console.error(error,'error in fetching all voters')
+      }
+
+    }
+
     const goBack=()=>{
         navigate(-1)
         dispatch(resetSelectedMembers());
@@ -147,10 +178,26 @@ function SurveyForm() {
     const clearSelectors=()=>{
       dispatch(resetSelectedMembers());
     }
+    
+   
+
+  
+  
+
+
+
+
+   
+   
+  
+   
+
     useEffect(()=>{
       getVoterDetails();
+      getAllVoters()
       
-      getSeletors();  
+      getSeletors(); 
+      
       
     },[HouseNo])
     
@@ -164,10 +211,66 @@ function SurveyForm() {
       } else {
         dispatch(removeSelectedMember(memberName));
       }
+      
     };
 
+
+
+   
+
+    
+     
+   
+
+
+
+
+
+
+
+
+
+
+
+    const handleLocationChange = async (position) => {
+      if (position && position.latitude && position.longitude) {
+       
+  
+        try {
+          const address = await getAddress(position.latitude, position.longitude);
+          setLatitude(position.latitude)
+          setLongitude(position.longitude)
+         
+          setGeo(address)
+        } catch (error) {
+          console.error('Error fetching address:', error.message);
+        }
+      } else {
+        console.error('Invalid position object:', position);
+      }
+    };
+    useEffect(() => {
+      if (location) {
+        handleLocationChange(location);
+      
+      }
+    }, [location]);
+
+
+
     const submitSurvey=async()=>{
-      const surveyData={Mobile:Mobile,Caste:Caste,Color:Color,Problems:Problem,Remarks:Remark,Survey:1,Observation:Observation,Availability:Availability,Location:Location,Surveyer:surveyer,Surveyed_on:currentDate.toLocaleString()}
+     
+   
+ 
+    
+    const formattedDateTime = moment(currentDate).tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
+    
+  
+   
+    
+
+
+      const surveyData={Mobile:Mobile,Caste:Caste,Color:Color,Problems:Problem,Remarks:Remark,Survey:1,Observation:Observation,Availability:Availability,Location:Location,Surveyer:surveyer,Surveyed_on:formattedDateTime,Geo:Geo,Latitude:Latitude,Longitude:Longitude}
       //const surveyData={Mobile_Number:Mobile}
       try{
         const response=await VotersService.submitSurvey(selectedMembers,surveyData);
@@ -193,6 +296,51 @@ function SurveyForm() {
         console.error('error in submitting Survey',error)
       }
     }
+    const handleAddMembers=()=>{
+      if(addMemebrs==true){
+        setAddMembers(false)
+         
+      }
+      else{
+        setAddMembers(true)    
+      }
+    }
+    useEffect(()=>{
+    
+      if(searchTerms==null){
+       
+        setTotalAddVoters(addMembersList)
+        
+      }
+      
+      else{
+  
+        const filteredVoters=addMembersList.filter(voter=>(voter.Name.toLowerCase().includes(searchTerms.toLowerCase()))
+        ||(voter.Epic.toLowerCase().includes(searchTerms.toLowerCase()))
+        ||(voter.House_Number.toLowerCase().includes(searchTerms.toLowerCase())));
+        setTotalAddVoters(filteredVoters)
+      }
+    },[searchTerms,addMembersList])
+
+
+    const addNewMember=(voter)=>{
+      Members.push(voter)
+      toast.success(`${voter.Name} added To Family Members `)
+
+    }
+
+
+
+
+
+
+
+
+    
+     
+  
+      
+  
 
 
    
@@ -212,8 +360,9 @@ function SurveyForm() {
               <div className='SAge'><span>Age : </span>{Age}</div>
               <div className='SAge'><span>Gender : </span>{Gender}</div>
             </div>
-            <div className='SHouseNo'><span>House No : </span> {HouseNo}</div>
+            <div className='SHouseNo' ><span>House No : </span> {HouseNo}</div>
             <div><span>Family Members : </span>{selectedMembers.length}</div>
+          
 
           </div>
 
@@ -279,9 +428,11 @@ function SurveyForm() {
           
             <div className='FamilyMembCont'>In this House No <strong style={{color:'red'}}>{HouseNo}</strong> there is <strong style={{color:'red'}}>{MembersCount}</strong> Members (Possibility).</div>
             {/* <div className='FamilyMembCont'>Confirm with a family member and choose from the following family members carefully.</div> */}
-          
-            <div onClick={clearSelectors} style={{color:'red',fontWeight:'bold'}}>reset</div>
-            <div className='MembersList'>
+            <div className='resetAddCont'>
+            <div className='resetBtn' onClick={clearSelectors} style={{color:'red',fontWeight:'bold'}}>reset</div>
+            <div className='addBtn' onClick={handleAddMembers} style={{color:'red',fontWeight:'bold'}}>{addMemebrs!=true?'Add':'Back'}</div>
+            </div>
+            {addMemebrs!=true?<div className='MembersList'>
               {Members!=null&&Members.map((member)=>(
               
                 <label>
@@ -301,7 +452,44 @@ function SurveyForm() {
 
 
 
+            </div>:
+            <div className='addMembersMainCont'>
+                <input type='search' className='searchMember' value={searchTerms} onChange={(e)=>{setSearchTerms(e.target.value)}} placeholder='Search By Name,epic'/>
+                
+                <div className='addMembersVoterList'>
+              {
+                TotalAddVoters.map((voter)=>(
+
+                  <div className='VoterCard' onClick={()=>{addNewMember(voter)}} style={voter.Survey===1?{background: 'linear-gradient(90deg, rgba(255,255,255,1) 94%, rgba(0,255,8,0.978203781512605) 94%)'}:{background:'linear-gradient(90deg, rgba(255,255,255,1) 96%, rgba(0,1,152,0.978203781512605) 96%)'}}>
+
+                    <div className='VoterSnoCont'>
+                        <div className='VoterId'><strong>Id : </strong>{voter.Epic}</div>
+                        <div className='SNO'><strong>S NO : </strong>{voter.Voter_S_no}</div>
+                    </div>
+                   
+                     
+                    
+                    <div className='VoterName'><strong>Name : </strong>{voter.Name}</div>
+                    <div className='VoterFName'><strong>Relative : </strong>{voter.Father_Name}</div>
+                    <div className='VoterAgeCont'>
+
+                      <div><strong>Age : </strong>{voter.Age}</div>
+                      <div><strong>Gender : </strong>{voter.Gender}</div>
+                      
+                      
+                    </div>
+                    
+                    <div><strong>H NO : </strong>{voter.House_Number}</div>
+                    <div className='surveyer'>{voter.Surveyer}</div>
+                   
+                  </div>
+                ))
+                
+              }
+                
+
             </div>
+            </div>}
             
 
           <div>

@@ -15,6 +15,8 @@ import SurveyForm from './Components/SurveyForm/SurveyForm';
 
 
 
+
+
 function App() {
   
 
@@ -23,6 +25,7 @@ function App() {
       <Routes>
         <Route path='' element={<Login/>} />
         <Route path='mainpage' element={<Mainpage/>} />
+      
         <Route path='mainpage/booth-list' element={<BoothList/>} />
         <Route path='mainpage/wards-list' element={<WardsList/>} />
         <Route path='mainpage/areas-list' element={<AreasList/>} />

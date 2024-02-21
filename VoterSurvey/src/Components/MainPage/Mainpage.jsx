@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie'
 import AuthService from '../../Services/GetAuthServices';
+import useLocation from '../../Services/GetGeoLocation';
 
 function Mainpage() {
     
@@ -13,8 +14,17 @@ function Mainpage() {
     const [Allocate,setAllocate]=useState(0)
     const [Complete,setComplete]=useState(0)
     const [Constituency,setConstituency]=useState('Constituency');
-    const [location, setLocation] = useState(null);
+   // const [location, setLocation] = useState(null);
     const [permissionDenied, setPermissionDenied] = useState(false);
+
+
+    const handleLocationChange = (position) => {
+        console.log('New Location:', position);
+        // You can use the latitude and longitude as needed in your application
+      };
+    
+    const { loc, error } = useLocation(handleLocationChange);
+    
 
     const navigate=useNavigate()
     const goToPage=(page)=>{
@@ -59,36 +69,10 @@ function Mainpage() {
         }
     }
 useEffect(()=>{
+    
     getUserDetails()
 },[])
-useEffect(() => {
-    const askForLocation = async () => {
-      try {
-        const granted = await navigator.permissions.query({ name: 'geolocation' });
 
-        if (granted.state === 'granted') {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              setLocation({ latitude, longitude });
-              
-            },
-            (error) => {
-              console.error('Error getting location:', error.message);
-             
-            }
-          );
-        } else if (granted.state === 'denied') {
-          setPermissionDenied(true);
-        }
-      } catch (error) {
-        console.error('Error checking geolocation permission:', error.message);
-       
-      }
-    };
-
-    askForLocation();
-  }, []);
 
       
  

@@ -8,7 +8,7 @@ import { useSelector,useDispatch } from 'react-redux';
 import { addVoterList,selectVoterList } from '../../Store/slice';
 import { Spin } from 'antd';
 import Cookies from 'js-cookie';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import _ from 'lodash';
 function WardsVoterList() {
   const navigate=useNavigate()
@@ -22,6 +22,8 @@ function WardsVoterList() {
   const [TotalVoters,setTotalVoters]=useState([]);
   const [searchTerms,setSearchTerms]=useState(null);
   const [spinning, setSpinning] = useState(false);
+  const [BgT,setBgT]=useState(false)
+  const [BgS,setBgS]=useState(false)
 
 
   const showLoader = () => {
@@ -66,12 +68,8 @@ function WardsVoterList() {
   }; 
 
   
-  useEffect(()=>{
-    
+  useEffect(()=>{  
     getVotersList()
-    
-   
-    
   },[dispatch])
   
 
@@ -100,10 +98,22 @@ function WardsVoterList() {
        navigate(`voter-survey/${VoterId}`)
     }
     else{
-      toast.error('No Permission')
+      toast.error(`No Permission only ${surveyer} can access this.` )
     }
   }
-  
+  const getSurveyedVoters=()=>{
+    setTotalVoters(Voters.filter((voter)=>voter.Survey===1))
+    setBgS(true)
+    setBgT(false)
+    console.log(TotalVoters.length)
+  }
+  const getTotalVoters=()=>{
+    setTotalVoters(Voters.filter((voter)=>voter.Survey!=1))
+
+    setBgT(true)
+    setBgS(false)
+
+  }
  
    
       
@@ -113,21 +123,23 @@ function WardsVoterList() {
   return (
     
     <div className='VoterListMainCont'>
+      <ToastContainer/>
      
      
         <div className='VoterHeaderCont'>
          <Icon icon="gravity-ui:arrow-left" className='ArrowIcon' onClick={goBack}/>
          <div>Ward NO : {WardNo}</div>
+         <div>Total : {Voters.length}</div>
         </div>
         <div className='VoterListCont'>
           <div className='VoterListAFS'>
               <div className='AllocatedFinishedCont'>
-                          <div className = 'AllocatedCont'>
-                              <div className='AllocatedBooths'>{Voters.length}</div>
-                              <div className='AllocatedText'>Total</div>
+                          <div className = 'AllocatedCont' onClick={getTotalVoters} style={{backgroundColor:BgT===true?'green':''}}>
+                              <div className='AllocatedBooths'>{Voters.filter((voter)=>voter.Survey!=1).length}</div>
+                              <div className='AllocatedText'>Pending</div>
                           </div>
-                          <div className='FinishedCont'>
-                              <div className='FinishedBooth'>{TotalVoters.filter((voter)=>voter.Survey==="1").length}</div>
+                          <div className='FinishedCont' onClick={getSurveyedVoters} style={{backgroundColor:BgS===true?'green':''}}>
+                              <div className='FinishedBooth'>{Voters.filter((voter)=>voter.Survey===1).length}</div>
                               <div className='AllocatedText'>Surveyed</div>
                           </div>
               </div>
@@ -141,7 +153,7 @@ function WardsVoterList() {
               {TotalVoters.length>=1?
                 TotalVoters.map((voter)=>(
 
-                  <div className='VoterCard' onClick={()=>{goToSurvey(voter.Epic,voter.Surveyer)}} style={voter.Survey==="1"?{background: 'linear-gradient(90deg, rgba(255,255,255,1) 94%, rgba(0,255,8,0.978203781512605) 94%)'}:{background:'linear-gradient(90deg, rgba(255,255,255,1) 96%, rgba(0,1,152,0.978203781512605) 96%)'}}>
+                  <div className='VoterCard' onClick={()=>{goToSurvey(voter.Epic,voter.Surveyer)}} style={voter.Survey===1?{background: 'linear-gradient(90deg, rgba(255,255,255,1) 94%, rgba(0,255,8,0.978203781512605) 94%)'}:{background:'linear-gradient(90deg, rgba(255,255,255,1) 96%, rgba(0,1,152,0.978203781512605) 96%)'}}>
 
                     <div className='VoterSnoCont'>
                         <div className='VoterId'><strong>Id : </strong>{voter.Epic}</div>

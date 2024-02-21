@@ -4,14 +4,18 @@ import './Login.css'
 import { useNavigate } from 'react-router-dom';
 import Logo from "../../assets/Images/people_pulse_logo.png"
 
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import AuthService from '../../Services/GetAuthServices';
+import useLocation from '../../Services/GetGeoLocation';
 
 function Login() {
     const navigate = useNavigate()
     const [Mobile,setMobile]=useState(null);
     const [Password,setPassword]=useState(null);
+
+
+  
     const GoToLogin=async()=>{
         if(Mobile!=null && Mobile.length==10 && Password!=null){
             const data={Mobile:Mobile,Password:Password}
@@ -35,6 +39,11 @@ function Login() {
         
         
     }
+
+
+
+    
+      
 
   return (
     <div className='LoginMainCont'>
