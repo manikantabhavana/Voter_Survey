@@ -13,12 +13,14 @@ import Cookies from 'js-cookie';
 import moment from 'moment-timezone';
 import useLocation from '../../Services/GetGeoLocation';
 import { add } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 const { TextArea } = Input;
 
 function SurveyForm() {
     
     const currentDate=new Date()
+    const survey_id=uuidv4()
     const apiKey = 'AIzaSyD3dRlhejixTZP72aNBTtXBRg_olo-bVxQ';
     const { location, error, getAddress } = useLocation();
     const [addMemebrs,setAddMembers]=useState(false)
@@ -215,23 +217,6 @@ function SurveyForm() {
     };
 
 
-
-   
-
-    
-     
-   
-
-
-
-
-
-
-
-
-
-
-
     const handleLocationChange = async (position) => {
       if (position && position.latitude && position.longitude) {
        
@@ -264,13 +249,11 @@ function SurveyForm() {
  
     
     const formattedDateTime = moment(currentDate).tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
+    const survey_date=new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }).toString()
+
     
   
-   
-    
-
-
-      const surveyData={Mobile:Mobile,Caste:Caste,Color:Color,Problems:Problem,Remarks:Remark,Survey:1,Observation:Observation,Availability:Availability,Location:Location,Surveyer:surveyer,Surveyed_on:formattedDateTime,Geo:Geo,Latitude:Latitude,Longitude:Longitude}
+      const surveyData={Mobile:Mobile,Caste:Caste,Color:Color,Problems:Problem,Remarks:Remark,Survey:1,Observation:Observation,Availability:Availability,Location:Location,Surveyer:surveyer,Surveyed_on:formattedDateTime,Geo:Geo,Latitude:Latitude,Longitude:Longitude,survey_id:survey_id,survey_date:survey_date}
       //const surveyData={Mobile_Number:Mobile}
       try{
         const response=await VotersService.submitSurvey(selectedMembers,surveyData);

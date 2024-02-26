@@ -93,7 +93,7 @@ function WardsVoterList() {
       }
 }
   const goToSurvey=(VoterId,surveyer)=>{
-    if(surveyer==="" || Surveyer===surveyer ){
+    if(surveyer==="" || Surveyer===surveyer ||Surveyer==="Ramki" || Surveyer==="Manikanta" ){
       updateSurveyStatus(VoterId)
        navigate(`voter-survey/${VoterId}`)
     }

@@ -14,6 +14,8 @@ function Mainpage() {
     const [Allocate,setAllocate]=useState(0)
     const [Complete,setComplete]=useState(0)
     const [Constituency,setConstituency]=useState('Constituency');
+    const [Booth,setBooth]=useState(null)
+    const [Ward,setWard]=useState(null)
    // const [location, setLocation] = useState(null);
     const [permissionDenied, setPermissionDenied] = useState(false);
 
@@ -51,15 +53,18 @@ function Mainpage() {
         
         if (response.ok) {
           const data = await response.json();
+          
          
           setMobile(data[0].Surveyer)
           setName(data[0].Name)
-          await Cookies.set('Surveyer',data[0].Name)
+          Cookies.set('Surveyer',data[0].Name)
           
           setAllocate(data.length)
           setComplete(data.filter((data)=>{data.Status==='Completed'}).length)
           setConstituency(data[0].Constitunecy)
-         
+          setBooth(data[0].Booth)
+          setWard(data[0].Wards)
+            
         } else {
           console.error('Error Response:', {
             status: response.status,
@@ -71,7 +76,9 @@ function Mainpage() {
 useEffect(()=>{
     
     getUserDetails()
-},[])
+
+    
+},[Name])
 
 
       
@@ -148,7 +155,7 @@ useEffect(()=>{
 
 
                 </div>
-                <div className='ConstituencyDetailsCont'>
+                <div className='ConstituencyDetailsCont' onClick={()=>{goToPage(`find-voter/${Ward}/${Booth}`)}}>
                 <div className='Assembly'>Find A Voter</div>
                 <Icon icon="material-symbols-light:keyboard-arrow-right" className='Icon'/>
                     </div>

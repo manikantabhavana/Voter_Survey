@@ -92,11 +92,8 @@ function AreaVoterList() {
       }
 }
   const goToSurvey=(VoterId,surveyer)=>{
-    if(surveyer==="" || Surveyer===surveyer ){
-      updateSurveyStatus(VoterId)
-
-      
-      
+    if(surveyer==="" || Surveyer===surveyer ||Surveyer==="Ramki" ||Surveyer==="Manikanta" ){
+      updateSurveyStatus(VoterId)      
        navigate(`voter-survey/${VoterId}`)
     }
     else{

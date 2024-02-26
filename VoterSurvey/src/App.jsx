@@ -11,6 +11,7 @@ import WardsList from './Components/WardsList/WardsList';
 import AreasList from './Components/AreasList/AreasList';
 import {BrowserRouter as Router,Route,Routes} from 'react-router-dom'
 import SurveyForm from './Components/SurveyForm/SurveyForm';
+import FindVoter from './Components/FindVoter/FindVoter';
 
 
 
@@ -25,6 +26,7 @@ function App() {
       <Routes>
         <Route path='' element={<Login/>} />
         <Route path='mainpage' element={<Mainpage/>} />
+        <Route path='mainpage/find-voter/:Ward/:Booth' element={<FindVoter/>} />
       
         <Route path='mainpage/booth-list' element={<BoothList/>} />
         <Route path='mainpage/wards-list' element={<WardsList/>} />

@@ -158,23 +158,31 @@
     box-shadow: 0px 0px 5px 0px gray;
     border-radius: 1vw;
 }
-.ant-select-selector{
+
+ .ant-select-item-option-content{
+    border:1px solid #28529E !important;
+    border-bottom: 4px solid #28529E !important;
+    color:#28529E !important;
+    font-size: 5vw !important;
+    font-weight: 600 !important;
+}
+.SelectAntd .ant-select-selector{
     height:5vh !important;
     font-size: 5vw !important;
     color:#28529E !important;
     
 }
-.ant-select-selection-item{
+.SelectAntd .ant-select-selection-item{
     font-weight: 700 !important;
     font-size: 6vw !important;
     font-weight: 700 !important;
 }
-.ant-select-arrow{
+.SelectAntd .ant-select-arrow{
     font-size: 5vw !important;
     color:#28529E !important;
    
 }
-.ant-select-selection-placeholder{
+.SelectAntd  .ant-select-selection-placeholder{
     font-size: 4vw !important;
     font-weight: 700 !important;
     color:#2c57a68f !important;
