@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import {toast,ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Icon } from '@iconify/react';
-import {Select,Input} from 'antd';
+import {Select,Input, Spin} from 'antd';
 import SelectorsService from '../../Services/GetSelectorsService';
 import VotersService from '../../Services/GetVotersService';
 import { useDispatch,useSelector } from 'react-redux';
@@ -86,12 +86,10 @@ function SurveyForm() {
         const problems= await SelectorsService.getProblems();
         const remarks= await SelectorsService.getRemarks();
 
-        const castess=await castes.results
-        const problemss=await problems.results
-        const remarkss = await remarks.results
-        const updatedCasteList =await  castess.map(caste => ({ ...caste, ['label']: caste.Value, ['value']: caste.Value }));
-        const updatedProblemList =await  problemss.map(problem => ({ ...problem, ['label']: problem.Value ,['value']: problem.Value }));
-        const updatedRemarksList =await  remarkss.map(remark => ({ ...remark, ['label']: remark.Value,['value']: remark.Value }));
+        
+        const updatedCasteList =await  castes.map(caste => ({ ...caste, ['label']: caste.Value, ['value']: caste.Value }));
+        const updatedProblemList =await  problems.map(problem => ({ ...problem, ['label']: problem.Value ,['value']: problem.Value }));
+        const updatedRemarksList =await  remarks.map(remark => ({ ...remark, ['label']: remark.Value,['value']: remark.Value }));
         await setCastes(updatedCasteList)
         await setProblems(updatedProblemList)
         await setRemarks(updatedRemarksList)
@@ -104,48 +102,20 @@ function SurveyForm() {
       
 
     }
-    const getVoterDetails=async()=>{
-      try{
-        const response=await VotersService.getVoterDetails(VoterId)
-       
-        setName(response.results[0].Name)
-        setHouseNo(response.results[0].House_Number)
-        setBooth(response.results[0].Booth)
-        
-        
-        setAge(response.results[0].Age)
-        setGender(response.results[0].Gender)
-        setRName(response.results[0].Father_Name)
-        if(response.results[0].Survey===1){
-          setCaste(response.results[0].Caste)
-          setColor(response.results[0].Color)
-          setAvailability(response.results[0].Availability)
-          setObservation(response.results[0].Observation)
-          setMobile(response.results[0].Mobile)
-          setLocation(response.results[0].Location)
-          setProblem(response.results[0].Problems)
-          setRemark(response.results[0].Remarks)
-          
-        }
-        setRealtion('Relative')
-        getMembers();
 
-      }
-      catch(error){
-        console.error(error,'error in fetching')
-      }
-
-    }
 
     const getMembers=async()=>{
       try{
-
-        const members=await VotersService.getMembers(HouseNo,No)
-        const memberss=await members.results
+        console.log(HouseNo)
+        
+        const members=await VotersService.getMembers(HouseNo,Booth)
        
-        setMembers(memberss)
        
-        setMembersCount(memberss.length)
+        
+       
+        setMembers(members)
+       
+        setMembersCount(members.length)
         
         
       }
@@ -157,6 +127,51 @@ function SurveyForm() {
 
     }
 
+   
+
+
+
+
+
+
+    const getVoterDetails=async()=>{
+      try{
+        const response=await VotersService.getVoterDetails(VoterId)
+       
+        setName(response[0].Name)
+        setHouseNo(response[0].House_Number)
+        setBooth(response[0].Booth)
+        
+      
+        
+        
+        setAge(response[0].Age)
+        setGender(response[0].Gender)
+        setRName(response[0].Father_Name)
+        if(response[0].Survey===1){
+          setCaste(response[0].Caste)
+          setColor(response[0].Color)
+          setAvailability(response[0].Availability)
+          setObservation(response[0].Observation)
+          setMobile(response[0].Mobile)
+          setLocation(response[0].Location)
+          setProblem(response[0].Problems)
+          setRemark(response[0].Remarks)
+          
+        }
+        setRealtion('Relative')
+       
+        
+
+      }
+      catch(error){
+        console.error(error,'error in fetching')
+      }
+
+    }
+
+    
+    
 
     const getAllVoters=async()=>{
       try{
@@ -164,7 +179,8 @@ function SurveyForm() {
         
         const response=await VotersService.getVoters(Booth)
        
-        dispatch(addMembersVoterList(response.results))
+       
+        dispatch(addMembersVoterList(response))
 
       }
       catch(error){
@@ -196,7 +212,8 @@ function SurveyForm() {
 
     useEffect(()=>{
       getVoterDetails();
-      getAllVoters()
+      getMembers()
+      
       
       getSeletors(); 
       
@@ -246,7 +263,7 @@ function SurveyForm() {
     const submitSurvey=async()=>{
      
    
- 
+    
     
     const formattedDateTime = moment(currentDate).tz('Asia/Kolkata').format('YYYY-MM-DD HH:mm:ss');
     const survey_date=new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }).toString()
@@ -256,6 +273,7 @@ function SurveyForm() {
       const surveyData={Mobile:Mobile,Caste:Caste,Color:Color,Problems:Problem,Remarks:Remark,Survey:1,Observation:Observation,Availability:Availability,Location:Location,Surveyer:surveyer,Surveyed_on:formattedDateTime,Geo:Geo,Latitude:Latitude,Longitude:Longitude,survey_id:survey_id,survey_date:survey_date}
       //const surveyData={Mobile_Number:Mobile}
       try{
+        if(surveyer!=null){
         const response=await VotersService.submitSurvey(selectedMembers,surveyData);
        
 
@@ -271,6 +289,13 @@ function SurveyForm() {
         else{
           toast.error('error in submitting')
         }
+      }
+      else{
+        toast.error('session expired!!!')
+        setTimeout(()=>{
+          navigate('/')
+        },500)
+      }
 
        
 
@@ -285,6 +310,7 @@ function SurveyForm() {
          
       }
       else{
+        getAllVoters()
         setAddMembers(true)    
       }
     }
@@ -381,7 +407,7 @@ function SurveyForm() {
 
 
 
-            <Select placeholder={'Select Remark'}
+            <Select placeholder={'Select Remarks'}
              options={Remarks}
              value={Remark}
              onSelect={(value,option)=>{ setRemark(value)}}
@@ -416,7 +442,7 @@ function SurveyForm() {
             <div className='addBtn' onClick={handleAddMembers} style={{color:'red',fontWeight:'bold'}}>{addMemebrs!=true?'Add':'Back'}</div>
             </div>
             {addMemebrs!=true?<div className='MembersList'>
-              {Members!=null&&Members.map((member)=>(
+              {Members.length>0?Members.map((member)=>(
               
                 <label>
                     <input type='checkbox'
@@ -428,7 +454,7 @@ function SurveyForm() {
                     />{member.Name}
                 </label>
 
-              ))
+              )):<Spin />
               }
               
               
@@ -440,7 +466,7 @@ function SurveyForm() {
                 <input type='search' className='searchMember' value={searchTerms} onChange={(e)=>{setSearchTerms(e.target.value)}} placeholder='Search By Name,epic'/>
                 
                 <div className='addMembersVoterList'>
-              {
+              {TotalAddVoters.length>0?
                 TotalAddVoters.map((voter)=>(
 
                   <div className='VoterCard' onClick={()=>{addNewMember(voter)}} style={voter.Survey===1?{background: 'linear-gradient(90deg, rgba(255,255,255,1) 94%, rgba(0,255,8,0.978203781512605) 94%)'}:{background:'linear-gradient(90deg, rgba(255,255,255,1) 96%, rgba(0,1,152,0.978203781512605) 96%)'}}>
@@ -466,7 +492,7 @@ function SurveyForm() {
                     <div className='surveyer'>{voter.Surveyer}</div>
                    
                   </div>
-                ))
+                )):<Spin/>
                 
               }
                 

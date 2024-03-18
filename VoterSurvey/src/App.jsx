@@ -27,6 +27,7 @@ function App() {
         <Route path='' element={<Login/>} />
         <Route path='mainpage' element={<Mainpage/>} />
         <Route path='mainpage/find-voter/:Ward/:Booth' element={<FindVoter/>} />
+        <Route path='mainpage/find-voter/:WardNo/:BoothNo/voter-survey/:VoterId' element={<SurveyForm/>} />
       
         <Route path='mainpage/booth-list' element={<BoothList/>} />
         <Route path='mainpage/wards-list' element={<WardsList/>} />

@@ -23,7 +23,7 @@ const useLocation = (onLocationChange) => {
     }
   };
 
-  useEffect(() => {
+
     const requestLocationPermission = async () => {
       try {
         const result = await navigator.permissions.query({ name: 'geolocation' });
@@ -59,7 +59,7 @@ const useLocation = (onLocationChange) => {
         setError(err);
       }
     };
-
+  useEffect(() => {
     requestLocationPermission();
   }, []);
 
@@ -68,6 +68,8 @@ const useLocation = (onLocationChange) => {
       onLocationChange(location);
     }
   }, [location, onLocationChange]);
+
+  
 
   return { location, error, getAddress };
 };

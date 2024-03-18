@@ -41,7 +41,9 @@ function VoterList() {
     try{
       const response=await VotersService.getVoters(BoothNo)
      
-      dispatch(addVoterList(response.results))
+     
+     
+      dispatch(addVoterList(response))
     }
     catch(error){
       console.error('error in fetching voter list from Voter Service')

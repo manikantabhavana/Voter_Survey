@@ -45,7 +45,7 @@ function WardsVoterList() {
       const response=await VotersService.getWardVoters(WardNo)
     
      
-      await dispatch(addVoterList(response.results))
+      await dispatch(addVoterList(response))
     }
     catch(error){
 

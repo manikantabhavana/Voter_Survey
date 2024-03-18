@@ -12,7 +12,6 @@
     padding: 0% 5%;
     background-color:#28529E;
     display: flex;
-    
     font-size: 5vw;
     color: white;
     font-weight: 600;
@@ -45,7 +44,6 @@
 .VoterListSearch .Search{
     width: 90%;
     margin:5% ;
-   
     font-weight: 600 !important;
    
    
@@ -72,17 +70,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    height: 80%;
     overflow-y: scroll;
    
     
 }
+.selectColumns{
+    width: 20%;
+   margin-left: auto;
+   margin-right: auto;
+    border: 2px solid black;
+    border-radius: 2vw;
 
+}
 .VoterList1{
+    margin-top:8%;
   
     display: flex;
     flex-direction: column;
-    height: 90%;
+    height:100%;
     padding:5% 5%;
     gap:5%;
     width: 100%;
@@ -93,6 +99,5 @@
    
 }
 
-.VoterList1 .VoterCard{
-    width: 90%;
-}
+
+

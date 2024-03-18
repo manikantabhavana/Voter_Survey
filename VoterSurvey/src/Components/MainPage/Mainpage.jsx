@@ -36,11 +36,14 @@ function Mainpage() {
 
 
     const getUserDetails = async () => {
+       
+      
         const token = Cookies.get('jwtToken');
        
       
         if (!token) {
           console.log('Token is missing');
+          navigate('/')
           return;
         }
       
@@ -54,10 +57,14 @@ function Mainpage() {
         if (response.ok) {
           const data = await response.json();
           
+          
+          
          
           setMobile(data[0].Surveyer)
           setName(data[0].Name)
+         
           Cookies.set('Surveyer',data[0].Name)
+          
           
           setAllocate(data.length)
           setComplete(data.filter((data)=>{data.Status==='Completed'}).length)
@@ -66,6 +73,7 @@ function Mainpage() {
           setWard(data[0].Wards)
             
         } else {
+            navigate('/')
           console.error('Error Response:', {
             status: response.status,
             statusText: response.statusText,
@@ -78,7 +86,12 @@ useEffect(()=>{
     getUserDetails()
 
     
-},[Name])
+},[])
+const logout=()=>{
+    Cookies.remove('jwtToken');
+    Cookies.remove('Surveyer');
+    navigate('/')
+}
 
 
       
@@ -102,7 +115,7 @@ useEffect(()=>{
             </div>
             <div className='HeadIcons'>
                 <Icon icon="mingcute:notification-line"  className='BellIcon' />
-                <Icon icon="ant-design:logout-outlined"  className='LogoutIcon' />
+                <Icon icon="ant-design:logout-outlined" onClick={logout} className='LogoutIcon' />
                 <Icon icon="ph:question-light"  className='QueryIcon' />
             </div>
 
